@@ -283,14 +283,18 @@ func (call *RevokeTokenCall) Do() (*BasicResponse, error) {
 // verify that a received ID token is authentic, meaning you can use it to obtain
 // the user's profile information and email.
 // https://developers.line.biz/en/reference/line-login/#verify-id-token
-func (client *Client) VerifyIDToken(idToken string, clientId string, nonce string, userId string) *VerifyIDTokenCall {
+func (client *Client) VerifyIDToken(idToken string, clientId string, options VerifyIDTokenRequestOptions) *VerifyIDTokenCall {
 	return &VerifyIDTokenCall{
 		c:        client,
 		idToken:  idToken,
 		clientId: clientId,
-		nonce:    nonce,
-		userId:   userId,
+		options:  options,
 	}
+}
+
+type VerifyIDTokenRequestOptions struct {
+	nonce  string
+	userId string
 }
 
 // VerifyIDTokenCall type
@@ -300,8 +304,7 @@ type VerifyIDTokenCall struct {
 
 	idToken  string
 	clientId string
-	nonce    string
-	userId   string
+	options  VerifyIDTokenRequestOptions
 }
 
 // WithContext method
@@ -315,13 +318,20 @@ func (call *VerifyIDTokenCall) Do() (*VerifyTokenIdResponse, error) {
 	data := url.Values{}
 	data.Set("id_token", call.idToken)
 	data.Set("client_id", call.clientId)
-	data.Set("nonce", call.nonce)
-	data.Set("user_id", call.userId)
+
+	if call.options.nonce != "" {
+		data.Set("nonce", call.options.nonce)
+	}
+
+	if call.options.userId != "" {
+		data.Set("user_id", call.options.userId)
+	}
 
 	res, err := call.c.post(call.ctx, APIEndpointTokenVerify, strings.NewReader(data.Encode()))
 	if res != nil && res.Body != nil {
 		defer res.Body.Close()
 	}
+
 	response, decodeErr := decodeToVerifyTokenIdResponse(res)
 	if err == nil {
 		return response, decodeErr
