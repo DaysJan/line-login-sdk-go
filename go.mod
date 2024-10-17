@@ -1,3 +1,3 @@
-module github.com/kkdai/line-login-sdk-go
+module github.com/DaysJan/line-login-sdk-go
 
 go 1.13
