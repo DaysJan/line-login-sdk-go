@@ -76,6 +76,23 @@ type TokenRefreshResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// VerifyTokenIdResponse type
+type VerifyTokenIdResponse struct {
+	Iss              string   `json:"iss"`
+	Sub              string   `json:"sub"`
+	Aud              string   `json:"aud"`
+	Exp              int      `json:"exp"`
+	Iat              int      `json:"iat"`
+	AuthTime         int      `json:"auth_time"`
+	Nonce            string   `json:"nonce"`
+	Amr              []string `json:"amr"`
+	Name             string   `json:"name"`
+	Picture          string   `json:"picture"`
+	Email            string   `json:"email"`
+	Error            string   `json:"error"`
+	ErrorDescription string   `json:"error_description"`
+}
+
 // GetUserProfileResponse type
 type GetUserProfileResponse struct {
 	// UserID: Identifier of the user
@@ -239,12 +256,12 @@ func decodeToTokenRefreshResponse(res *http.Response) (*TokenRefreshResponse, er
 	return &result, nil
 }
 
-func decodeToVerifyTokenIdResponse(res *http.Response) (*Payload, error) {
+func decodeToVerifyTokenIdResponse(res *http.Response) (*VerifyTokenIdResponse, error) {
 	if err := checkResponse(res); err != nil {
 		return nil, err
 	}
 	decoder := json.NewDecoder(res.Body)
-	result := Payload{}
+	result := VerifyTokenIdResponse{}
 	if err := decoder.Decode(&result); err != nil {
 		return nil, err
 	}

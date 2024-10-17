@@ -283,11 +283,13 @@ func (call *RevokeTokenCall) Do() (*BasicResponse, error) {
 // verify that a received ID token is authentic, meaning you can use it to obtain
 // the user's profile information and email.
 // https://developers.line.biz/en/reference/line-login/#verify-id-token
-func (client *Client) VerifyIDToken(idToken string, clientId string) *VerifyIDTokenCall {
+func (client *Client) VerifyIDToken(idToken string, clientId string, nonce string, userId string) *VerifyIDTokenCall {
 	return &VerifyIDTokenCall{
 		c:        client,
 		idToken:  idToken,
 		clientId: clientId,
+		nonce:    nonce,
+		userId:   userId,
 	}
 }
 
@@ -309,7 +311,7 @@ func (call *VerifyIDTokenCall) WithContext(ctx context.Context) *VerifyIDTokenCa
 }
 
 // Do method
-func (call *VerifyIDTokenCall) Do() (*Payload, error) {
+func (call *VerifyIDTokenCall) Do() (*VerifyTokenIdResponse, error) {
 	data := url.Values{}
 	data.Set("id_token", call.idToken)
 	data.Set("client_id", call.clientId)
