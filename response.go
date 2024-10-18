@@ -257,9 +257,6 @@ func decodeToTokenRefreshResponse(res *http.Response) (*TokenRefreshResponse, er
 }
 
 func decodeToVerifyTokenIdResponse(res *http.Response) (*VerifyTokenIdResponse, error) {
-	if err := checkResponse(res); err != nil {
-		return nil, err
-	}
 	decoder := json.NewDecoder(res.Body)
 	result := VerifyTokenIdResponse{}
 	if err := decoder.Decode(&result); err != nil {
